@@ -145,12 +145,13 @@ class SmartDisplayTest(unittest.TestCase):
                                        flags=re.MULTILINE),
                           output)
         # Here a faked sample of what we are looking for:
-        match = re.search(r'^-+ +| +d2.2 $', '------- | d2.2',
+        # !#$_
+        match = re.search(r'^!#\$_ +| +d2.2 $', '!#$_ | d2.2',
                           flags=re.MULTILINE)
         print("Faked matching at: %s" % match.string[match.start():match.end()])
         assert match is not None
         # Now, doing the same on the actual output
-        match = re.search(r'^-+ +| +d2.2 $', output, flags=re.MULTILINE)
+        match = re.search(r'^!#\$_ +| +d2.2 $', output, flags=re.MULTILINE)
         self.assertIsNotNone(match, output)
         print(output)
         print("Matching at: %s" % match.string[match.start():match.end()])
