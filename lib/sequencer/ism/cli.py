@@ -33,7 +33,7 @@ import sys
 from logging import getLogger
 from os import EX_OK, path
 
-from sequencer.commons import get_version, add_options_to
+from sequencer.commons import get_version, add_options_to, to_unicode
 from sequencer.ism.algo import order_mixed, \
     order_seq_only, order_par_only, order_optimal
 from lxml import etree as ET

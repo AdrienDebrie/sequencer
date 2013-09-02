@@ -29,8 +29,6 @@ from pygraph.readwrite.dot import write
 from pygraph.classes.digraph import digraph
 from pygraph.classes.exceptions import InvalidGraphType
 from pygraph.classes.graph import graph
-from pygraph.classes.hypergraph import hypergraph
-from operator import itemgetter
 from ConfigParser import RawConfigParser
 import cStringIO
 import math
@@ -77,42 +75,40 @@ REMOVE_UNSPECIFIED_COLUMNS = -1
 NONE_VALUE = unicode(None)
 
 
-def convert_uni_graph_to_str(G):
+def convert_uni_graph_to_str(a_gr):
     """
     Returns a graph filled with str values only.
     Inspired by pygraph.readwrite.markup.write
     """
-    if (type(G) == graph):
+    if (type(a_gr) == graph):
         gr = graph()
-    elif (type(G) == digraph ):
+    elif (type(a_gr) == digraph ):
         gr = digraph()
-    elif (type(G) == hypergraph ):
-        return write_hypergraph(G)
     else:
         raise InvalidGraphType
 
-    for each_node in G.nodes():
+    for each_node in a_gr.nodes():
         strnode = to_str_from_unicode(each_node, should_be_uni=True)
         gr.add_node(strnode)
 
-        for each_attr in G.node_attributes(each_node):
+        for each_attr in a_gr.node_attributes(each_node):
             strattr0 = to_str_from_unicode(each_attr[0], should_be_uni=True)
             strattr1 = to_str_from_unicode(each_attr[1], should_be_uni=True)
             gr.add_node_attribute(strnode, (strattr0, strattr1))
 
-    for edge_from, edge_to in G.edges():
+    for edge_from, edge_to in a_gr.edges():
         strfrom = to_str_from_unicode(edge_from, should_be_uni=True)
         strto = to_str_from_unicode(edge_to, should_be_uni=True)
         strlabel = to_str_from_unicode(
-                        G.edge_label((edge_from, edge_to)),
+                        a_gr.edge_label((edge_from, edge_to)),
                         should_be_uni=True)
         strweight = to_str_from_unicode(
-                        G.edge_weight((edge_from, edge_to)), 
+                        a_gr.edge_weight((edge_from, edge_to)), 
                         should_be_uni=True)
         gr.add_edge((strfrom, strto))
         gr.set_edge_label((strfrom, strto), strlabel)
         gr.set_edge_weight((strfrom, strto), strweight)
-        for attr_name, attr_val in G.edge_attributes((edge_from, edge_to)):
+        for attr_name, attr_val in a_gr.edge_attributes((edge_from, edge_to)):
             stra_name = to_str_from_unicode(attr_name, should_be_uni=True)
             stra_val = to_str_from_unicode(attr_val, should_be_uni=True)
             gr.add_edge_attribute((edge_from, edge_to), (stra_name, stra_val))
@@ -177,16 +173,16 @@ def replace_if_none(value):
     """
     Replace the given value by NONE_VALUE if it is considered none or empty
     """
-    return None if value is not None and (value == NONE_VALUE or len(value) == 0) \
-        else value
+    return None if value is not None and (value == NONE_VALUE or \
+                                          len(value) == 0) else value
 
 
 def replace_if_none_by_uni(value):
     """
     Replace the given value by unicode "None" if it is considered none or empty
     """
-    return NONE_VALUE if value is None or (value == NONE_VALUE or len(value) == 0) \
-        else value
+    return NONE_VALUE if value is None or (value == NONE_VALUE or \
+                                           len(value) == 0) else value
 
 
 def get_basedir(base=None):
@@ -659,24 +655,24 @@ def get_nodes_from(component_set):
 # Code below taken from http://code.activestate.com/recipes/267662/ (r7)
 # and modified to our own needs.
 def indent(rows,
-           hasHeader=False, headerChar='-',
+           has_header=False, header_char='-',
            delim=' | ',
            justify_functions=None,
-           separateRows=False,
+           separate_rows=False,
            prefix='', postfix='',
            max_widths=None,
            filler_char='_'):
     """Indents a table by column.
        - rows: A sequence of sequences of items, one sequence per row.
-       - hasHeader: True if the first row consists of the columns' names.
-       - headerChar: Character to be used for the row separator line
-         (if hasHeader==True or separateRows==True).
+       - has_header: True if the first row consists of the columns' names.
+       - header_char: Character to be used for the row separator line
+         (if has_header==True or separate_rows==True).
        - delim: The column delimiter.
        - justify_functions: Determines how are data justified in each column.
          Valid values are function of the form f(str,width)->str such as 
          str.ljust, str.center and str.rjust. Default is str.ljust.
-       - separateRows: True if rows are to be separated by a line
-         of 'headerChar's.
+       - separate_rows: True if rows are to be separated by a line
+         of 'header_char's.
        - prefix: A string prepended to each printed row.
        - postfix: A string appended to each printed row.
        - max_widths: Determines the maximum width for each column.
@@ -695,44 +691,46 @@ def indent(rows,
     _LOGGER.debug("max_widths: %s", max_widths)
 
     def i2str(item, maxwidth):
-        """Trasform the given row item into a final string."""
+        """Transform the given row item into a final string."""
         if item is FILL_EMPTY_ENTRY:
             return filler_char * maxwidth
         return item
 
-    # closure for breaking logical rows to physical, using wrapfunc
-    def rowWrapper(row):
-        newRows = [wrap_onspace_strict(item, width).split('\n') for (item, width) in zip(row, max_widths)]
+    def row_wrapper(row):
+        """ closure for breaking logical rows to physical, using wrapfunc """
+        newRows = [wrap_onspace_strict(item, width).split('\n') \
+                                    for (item, width) in zip(row, max_widths)]
         _LOGGER.debug("NewRows: %s", newRows)
         if len(newRows) <= 1:
             return newRows
-        return [[substr or '' for substr in item] for item in map(None, *newRows)]
+        return [[substr or '' for substr in item] \
+                                    for item in map(None, *newRows)]
 
     # break each logical row into one or more physical ones
-    logicalRows = [rowWrapper(row) for row in rows]
-    _LOGGER.debug("logicalRows: %s", logicalRows)
+    logical_rows = [row_wrapper(row) for row in rows]
+    _LOGGER.debug("logical_rows: %s", logical_rows)
     # Fetch the list of physical rows
-    physicalRows = logicalRows[0]
-    for lrow in logicalRows[1:]:
-        physicalRows += lrow
-    _LOGGER.debug("physicalRows: %s", physicalRows)
+    physical_rows = logical_rows[0]
+    for lrow in logical_rows[1:]:
+        physical_rows += lrow
+    _LOGGER.debug("physical_rows: %s", physical_rows)
     # columns of physical rows
-    if len(physicalRows) == 0:
+    if len(physical_rows) == 0:
         return ''
-    columns = map(None, *physicalRows)
+    columns = map(None, *physical_rows)
     _LOGGER.debug("columns: %s", columns)
     # get the maximum of each column by the string length of its items
-    maxWidths = [max([len(item) for item in column]) for column in columns]
-    _LOGGER.debug("MaxWidths: %s", maxWidths)
-    rowSeparator = headerChar * (len(prefix) + len(postfix) + sum(maxWidths) + \
-                                 len(delim) * (len(maxWidths) - 1))
+    max_widths = [max([len(item) for item in column]) for column in columns]
+    _LOGGER.debug("MaxWidths: %s", max_widths)
+    row_separator = header_char * (len(prefix) + len(postfix) + sum(max_widths) + \
+                                 len(delim) * (len(max_widths) - 1))
     output = cStringIO.StringIO()
-    if separateRows:
-        print(rowSeparator, file=output)
-    # for physicalRows in logicalRows:
-    for row in physicalRows:
+    if separate_rows:
+        print(row_separator, file=output)
+    # for physical_rows in logical_rows:
+    for row in physical_rows:
         _LOGGER.debug("row: %s", row)
-        row2=[]
+        row2 = []
         for r in row:
             row2.append(to_unicode(r))
         line = [justify(i2str(item, width),
@@ -740,7 +738,7 @@ def indent(rows,
                                     justify,
                                     width) in zip(row2,
                                                   justify_functions,
-                                                  maxWidths)]
+                                                  max_widths)]
 
         line_uni = [to_unicode(elt) for elt in line]
         line_uni = prefix + delim.join(line_uni) + postfix
@@ -748,9 +746,9 @@ def indent(rows,
 
         print(line_uni,
               file=output)
-        if separateRows or hasHeader:
-            print(rowSeparator, file=output)
-            hasHeader = False
+        if separate_rows or has_header:
+            print(row_separator, file=output)
+            has_header = False
     return output.getvalue()
 
 
@@ -779,8 +777,8 @@ def wrap_onspace_strict(text, width):
         text = str(None)
     if width == 0:
         return text
-    wordRegex = re.compile(r'\S{' + str(width) + r',}')
-    return wrap_onspace(wordRegex.sub(lambda m: wrap_always(m.group(), width), text), width)
+    word_regex = re.compile(r'\S{' + str(width) + r',}')
+    return wrap_onspace(word_regex.sub(lambda m: wrap_always(m.group(), width), text), width)
 
 
 def wrap_always(text, width):
@@ -869,17 +867,17 @@ def smart_display(header, data,
     col_nb = len(header)
     line_nb = len(data)
     max_widths = []
-    for h in header:
-        max_widths.append(columns_max.get(h, 0))
+    for head in header:
+        max_widths.append(columns_max.get(head, 0))
 
-    return indent([header] + data, hasHeader=True,
-                  headerChar=hsep, delim=vsep,
-                  separateRows=False,
+    return indent([header] + data, has_header=True,
+                  header_char=hsep, delim=vsep,
+                  separate_rows=False,
                   max_widths=max_widths,
                   filler_char=filler_char)
 
 
-def output_graph(graph, root=None):
+def output_graph(a_graph, root=None):
     """
     Returns a tuplet containing:
     - the result of the depth_first_search() function starting at 'root'
@@ -888,30 +886,30 @@ def output_graph(graph, root=None):
       dotty command)
     """
 
-    dfs = depth_first_search(graph, root)
-    dot = write(graph)
+    dfs = depth_first_search(a_graph, root)
+    dot = write(a_graph)
     return [dfs, dot]
 
 
-def remove_leaves(graph, leaves):
+def remove_leaves(a_graph, leaves):
     """
     Remove the given leaves form the given graph, including any edges
     that are incidents to them.
     """
-    _LOGGER.debug("Removing %s from %s", leaves, graph)
+    _LOGGER.debug("Removing %s from %s", leaves, a_graph)
     for node in leaves:
-        incidents = graph.incidents(node)
+        incidents = a_graph.incidents(node)
         for parent in incidents:
-            graph.del_edge((parent, node))
-        graph.del_node(node)
+            a_graph.del_edge((parent, node))
+        a_graph.del_node(node)
 
 
-def write_graph_to(graph, file_name):
+def write_graph_to(a_graph, file_name):
     """
     Write the given graph to the given file_name. If 'file_name' ==
     '-', prints to stdout (using logger.output())
     """
-    strgraph = convert_uni_graph_to_str(graph)
+    strgraph = convert_uni_graph_to_str(a_graph)
     nodes = strgraph.nodes()
     for node in nodes:
         # Attributes (also called label in pygraph) on nodes may be
@@ -985,9 +983,9 @@ class CyclesDetectedError(SequencerError):
     """
     Thrown when a cycle has been detected in the given graph.
     """
-    def __init__(self, cycle, graph):
+    def __init__(self, cycle, a_graph):
         self.cycle = cycle
-        self.graph = graph
+        self.graph = a_graph
         msg = "At least one cycle has been detected: " + str(cycle)
         SequencerError.__init__(self, msg)
 

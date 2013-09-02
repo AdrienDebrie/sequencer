@@ -30,7 +30,7 @@ import subprocess
 from io import StringIO
 
 from ClusterShell.NodeSet import NodeSet
-from sequencer.commons import CyclesDetectedError, substitute, get_version,\
+from sequencer.commons import CyclesDetectedError, substitute, get_version, \
                                 to_unicode, to_str_from_unicode
 from sequencer.dgm.errors import UnknownDepError
 from sequencer.ise.rc import FORCE_ALWAYS, FORCE_NEVER

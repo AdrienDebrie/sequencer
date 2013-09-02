@@ -128,7 +128,7 @@ def graphrules(db, config, args):
     doc = GRAPHRULES_DOC + \
         " The graph is given in DOT format."
     cmd = os.path.basename(sys.argv[0])
-    progname=to_unicode(cmd).encode('ascii', 'replace')
+    progname = to_unicode(cmd).encode('ascii', 'replace')
     parser = optparse.OptionParser(usage, description=doc, prog=progname)
     add_options_to(parser, ['--out'], config)
     (options, action_args) = parser.parse_args(args)
@@ -154,7 +154,7 @@ def knowntypes(db, config, args):
         " be applied on them for the" + \
         " computation of the dependency graph is also given."
     cmd = os.path.basename(sys.argv[0])
-    progname=to_unicode(cmd).encode('ascii', 'replace')
+    progname = to_unicode(cmd).encode('ascii', 'replace')
     parser = optparse.OptionParser(usage, description=doc, prog=progname)
     (options, action_args) = parser.parse_args(args)
     if len(action_args) != 1:
@@ -228,7 +228,7 @@ def _parse_depmake_cmdline(config, args):
     doc = DEPMAKE_DOC + \
         " The output format is suitable for the 'seqmake' action."
     cmd = os.path.basename(sys.argv[0])
-    progname=to_unicode(cmd).encode('ascii', 'replace')
+    progname = to_unicode(cmd).encode('ascii', 'replace')
     parser = optparse.OptionParser(usage, description=doc, prog=progname)
     parser.add_option('-F', '--Force',
                       metavar='RULE_LIST',
@@ -388,7 +388,7 @@ def dbcreate(db, config, args):
     usage = "%prog [options] dbcreate"
     doc = DBCREATE_DOC
     cmd = os.path.basename(sys.argv[0])
-    progname=to_unicode(cmd).encode('ascii', 'replace')
+    progname = to_unicode(cmd).encode('ascii', 'replace')
     parser = optparse.OptionParser(usage, description=doc, prog=progname)
     (options, dbcreate_args) = parser.parse_args(args)
     if len(dbcreate_args) != 0:
@@ -405,7 +405,7 @@ def dbdrop(db, config, args):
     usage = "%prog [options] dbdrop"
     doc = DBDROP_DOC
     cmd = os.path.basename(sys.argv[0])
-    progname=to_unicode(cmd).encode('ascii', 'replace')
+    progname = to_unicode(cmd).encode('ascii', 'replace')
     parser = optparse.OptionParser(usage, description=doc, prog=progname)
     add_options_to(parser, ['--Enforce'], config)
     (options, dbdrop_args) = parser.parse_args(args)
@@ -430,7 +430,7 @@ def dbshow(db, config, args):
     doc = "Display the sequencer table (for the given " + \
         "ruleset if specified)."
     cmd = os.path.basename(sys.argv[0])
-    progname=to_unicode(cmd).encode('ascii', 'replace')
+    progname = to_unicode(cmd).encode('ascii', 'replace')
     parser = optparse.OptionParser(usage, description=doc, prog=progname)
     parser.add_option("", "--columns", dest="columns_list",
                       action='store',
@@ -508,7 +508,7 @@ errors might be raised if DB constraints are not fulfilled. The DB
 specific error message should tell what the problem is. If unclear,
 have a look to the DB constraints."""
     cmd = os.path.basename(sys.argv[0])
-    progname=to_unicode(cmd).encode('ascii', 'replace')
+    progname = to_unicode(cmd).encode('ascii', 'replace')
     parser = optparse.OptionParser(usage, description=doc, prog=progname)
     (options, add_args) = parser.parse_args(args)
     if len(add_args) != 9:
@@ -533,7 +533,7 @@ def dbremove(db, config, args):
         "ruleset_name [rule_name...]"
     doc = """Remove all (given) rules from the sequencer table."""
     cmd = os.path.basename(sys.argv[0])
-    progname=to_unicode(cmd).encode('ascii', 'replace')
+    progname = to_unicode(cmd).encode('ascii', 'replace')
     parser = optparse.OptionParser(usage, description=doc, prog=progname)
     add_options_to(parser, ['--Enforce', '--nodeps'], config)
     (options, remove_args) = parser.parse_args(args)
@@ -570,7 +570,7 @@ def dbupdate(db, config, args):
     "of the given rule ('ruleset', 'name') with values " + \
         "<value1>, <value2>, ... respectively in the sequencer table."
     cmd = os.path.basename(sys.argv[0])
-    progname=to_unicode(cmd).encode('ascii', 'replace')
+    progname = to_unicode(cmd).encode('ascii', 'replace')
     parser = optparse.OptionParser(usage, description=doc, prog=progname)
     add_options_to(parser, ['--nodeps'], config)
     (options, update_args) = parser.parse_args(args)
@@ -609,7 +609,7 @@ def dbcopy(db, config, args):
     doc = "Copy ruleset_src to ruleset_dst" + \
         " or copy rule_src from ruleset_src to ruleset_dest."
     cmd = os.path.basename(sys.argv[0])
-    progname=to_unicode(cmd).encode('ascii', 'replace')
+    progname = to_unicode(cmd).encode('ascii', 'replace')
     parser = optparse.OptionParser(usage, description=doc, prog=progname)
     (options, copy_args) = parser.parse_args(args)
     if len(copy_args) < 2:
@@ -670,7 +670,7 @@ def dbchecksum(db, config, args):
     doc = "Compute checksum for the specified ruleset " + \
     " (all if not specified)"
     cmd = os.path.basename(sys.argv[0])
-    progname=to_unicode(cmd).encode('ascii', 'replace')
+    progname = to_unicode(cmd).encode('ascii', 'replace')
     parser = optparse.OptionParser(usage, description=doc, prog=progname)
     (options, action_args) = parser.parse_args(args)
     if len(action_args) > 1:
@@ -686,7 +686,8 @@ def dbchecksum(db, config, args):
                 tab_values.append([ruleset_name,
                                    rulename,
                                    h_for[rulename].hexdigest()])
-            tab_values.append([ruleset_name, FILL_EMPTY_ENTRY, ruleset_h.hexdigest()])
+            tab_values.append([ruleset_name, FILL_EMPTY_ENTRY, \
+                               ruleset_h.hexdigest()])
         except UnknownRuleSet as urs:
             _LOGGER.error(DBCHECKSUM_ACTION_NAME + str(urs))
             return 1
@@ -699,7 +700,8 @@ def dbchecksum(db, config, args):
                 tab_values.append([ruleset_name,
                                    rulename,
                                    h_for[rulename].hexdigest()])
-            tab_values.append([ruleset_name, FILL_EMPTY_ENTRY, ruleset_h.hexdigest()])
+            tab_values.append([ruleset_name, FILL_EMPTY_ENTRY, 
+                               ruleset_h.hexdigest()])
     _LOGGER.output(smart_display(CHECKSUM_HEADER,
                                  tab_values,
                                  vsep=u' | '))

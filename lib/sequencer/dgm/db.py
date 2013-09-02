@@ -20,7 +20,7 @@
 """
 Sequencer DB Management
 """
-from ConfigParser import RawConfigParser, DuplicateSectionError
+from ConfigParser import DuplicateSectionError
 from os import path
 from sequencer.commons import get_version, UnknownRuleSet, SequencerError, \
     replace_if_none, NONE_VALUE, DuplicateRuleError, NoSuchRuleError, \
@@ -30,7 +30,6 @@ from sequencer.dgm.model import Rule
 import hashlib
 import logging
 import os
-import sys
 import codecs
 
 __author__ = "Pierre Vigneras"
@@ -145,8 +144,8 @@ class SequencerFileDB(object):
             config = UnicodeConfigParser()
             
             config_file = self._get_config_filename_for(ruleset_name)
-            with codecs.open(config_file, 'r', encoding='utf-8') as f:
-                config.readfp(f)
+            with codecs.open(config_file, 'r', encoding='utf-8') as f_conf:
+                config.readfp(f_conf)
 
             if _LOGGER.isEnabledFor(logging.DEBUG):
                 _LOGGER.debug("Ruleset found: %s with rules: %s",
@@ -224,20 +223,17 @@ class SequencerFileDB(object):
 
         config.set(rule.name, 'filter', replace_if_none_by_uni(rule.filter))
 
-        # was "... str(rule.action))"
         config.set(rule.name, 'action', replace_if_none_by_uni(rule.action))
 
-        # was "... str(rule.depsfinder))"
         config.set(rule.name, 'depsfinder', 
                     replace_if_none_by_uni(rule.depsfinder))
 
         config.set(rule.name, 'dependson',
-                   NONE_VALUE if len(rule.dependson) == 0 else u",".join(rule.dependson))
+                   NONE_VALUE if len(rule.dependson) == 0 
+                   else u",".join(rule.dependson))
 
-        # was "... str(rule.comments))"
         config.set(rule.name, 'comments', replace_if_none_by_uni(rule.comments))
 
-        # was "... str(rule.help))"
         config.set(rule.name, 'help', replace_if_none_by_uni(rule.help))
 
         if commit:
@@ -326,7 +322,7 @@ class SequencerFileDB(object):
         # has been specified
         if new_ruleset is not None:
             new_config = self.config_for_ruleset.setdefault(new_ruleset,
-                                                            UnicodeConfigParser())
+                                                         UnicodeConfigParser())
             if new_config.has_section(section_name):
                 raise ValueError("Cannot move (%s, %s)" % (ruleset, name) + \
                                      " to (%s, %s):" % (new_ruleset,

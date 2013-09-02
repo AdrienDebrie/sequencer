@@ -35,8 +35,8 @@ from logging import getLogger
 
 from ClusterShell.NodeSet import NodeSet
 from sequencer.commons import write_graph_to, get_header, \
-    smart_display, FILL_EMPTY_ENTRY, CyclesDetectedError, td_to_seconds, get_version, \
-    add_options_to, to_unicode
+    smart_display, FILL_EMPTY_ENTRY, CyclesDetectedError, td_to_seconds, \
+    get_version, add_options_to, to_unicode
 from sequencer.ise import api, model, parser
 
 
@@ -88,7 +88,7 @@ def _parse(basedir, config, args):
     doc = SEQEXEC_DOC + \
         " The input can be the output of the 'seqmake' action."
     cmd = os.path.basename(sys.argv[0])
-    progname=to_unicode(cmd).encode('ascii', 'replace')
+    progname = to_unicode(cmd).encode('ascii', 'replace')
     opt_parser = optparse.OptionParser(usage, description=doc, prog=progname)
     opt_parser.add_option("-F", "--Force",
                           dest="force",
@@ -100,7 +100,8 @@ def _parse(basedir, config, args):
                           # good action.  You should provide either a
                           # --Force=no or a --no-Force option.
 
-                          # default=config.getboolean(SEQEXEC_ACTION_NAME, "Force"),
+                          # default=config.getboolean(SEQEXEC_ACTION_NAME, \
+                          #                           "Force"),
                           help="Do not stop the execution of an action when" + \
                               " one of its dependencies exits" + \
                               " with a WARNING error code.")
@@ -152,7 +153,8 @@ def _report_model(a_model):
                        "-"])
     _LOGGER.output(smart_display(header,
                                  tab_values, vsep=u" | ",
-                                 justify=[str.center, str.center, str.ljust, str.center]))
+                                 justify=[str.center, str.center, str.ljust, \
+                                 str.center]))
 
 def _compute_seq_total_time(execution):
     """
